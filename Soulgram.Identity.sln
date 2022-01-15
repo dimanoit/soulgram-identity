@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soulgram.Identity", "Soulgram.Identity\Soulgram.Identity.csproj", "{3DD6E258-DB1E-4AC1-B4C3-D81E41B8E938}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Soulgram.Identity.IntegrationTests", "Soulgram.Identity.IntegrationTests\Soulgram.Identity.IntegrationTests.csproj", "{9DBAC4C9-4F64-4595-B831-F6BC7DDD7B94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3DD6E258-DB1E-4AC1-B4C3-D81E41B8E938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DD6E258-DB1E-4AC1-B4C3-D81E41B8E938}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DD6E258-DB1E-4AC1-B4C3-D81E41B8E938}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DD6E258-DB1E-4AC1-B4C3-D81E41B8E938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DBAC4C9-4F64-4595-B831-F6BC7DDD7B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DBAC4C9-4F64-4595-B831-F6BC7DDD7B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DBAC4C9-4F64-4595-B831-F6BC7DDD7B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DBAC4C9-4F64-4595-B831-F6BC7DDD7B94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3107F395-4219-4845-9399-15B62FB07FBF}
+	EndGlobalSection
+EndGlobal
