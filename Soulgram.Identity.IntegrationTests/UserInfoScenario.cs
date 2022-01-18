@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using soulgram.identity;
+using soulgram.identity.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using FluentAssertions;
-using soulgram.identity.Models;
 using Xunit;
 
 namespace Soulgram.Identity.IntegrationTests
