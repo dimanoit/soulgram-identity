@@ -10,5 +10,6 @@ public static class UserHelperService
     {
         userToUpdate.ProfileImg = dataToUpdate.ProfileImg ?? userToUpdate.ProfileImg;
         userToUpdate.Hobbies = dataToUpdate.Hobbies ?? userToUpdate.Hobbies;
+        userToUpdate.Fullname = dataToUpdate.Fullname ?? userToUpdate.Fullname;
     }
 }

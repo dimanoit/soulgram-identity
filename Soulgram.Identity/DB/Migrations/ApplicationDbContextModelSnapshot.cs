@@ -174,6 +174,9 @@ namespace Soulgram.Identity.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Fullname")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Hobbies")
                         .HasColumnType("nvarchar(max)");
 

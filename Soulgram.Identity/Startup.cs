@@ -84,6 +84,7 @@ namespace soulgram.identity
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseCors("MyPolicy");
             app.UseIdentityServer();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
@@ -119,6 +120,13 @@ namespace soulgram.identity
                 .AddInMemoryClients(Config.Clients)
                 .AddInMemoryApiResources(Config.Apis)
                 .AddAspNetIdentity<ApplicationUser>();
+            
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+	            builder.AllowAnyOrigin()
+		            .AllowAnyMethod()
+		            .AllowAnyHeader();
+            }));
             services.AddLocalApiAuthentication();
 
             // not recommended for production - you need to store your key material somewhere secure

@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Soulgram.File.Manager.Interfaces;
+using soulgram.identity.Data;
 using soulgram.identity.Services;
 
 namespace Soulgram.Identity.ApiControllers
@@ -23,15 +24,17 @@ namespace Soulgram.Identity.ApiControllers
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IFileManager _fileManager;
 		private readonly IEventBus _eventBus;
-	
+		private readonly ApplicationDbContext _dbContext;
+		
 		public AccountApiController(
 			UserManager<ApplicationUser> userManager,
 			IEventBus eventBus,
-			IFileManager fileManager)
+			IFileManager fileManager, ApplicationDbContext dbContext)
 		{
 			_userManager = userManager;
 			_eventBus = eventBus;
 			_fileManager = fileManager;
+			_dbContext = dbContext;
 		}
 
 		[HttpPost]
@@ -74,6 +77,24 @@ namespace Soulgram.Identity.ApiControllers
 				.Where(u => u.Id == userId)
 				.FirstAsync(cancellationToken);
 
+			return user;
+		}
+		
+		[HttpGet("compact")]
+		public async Task<CompactUserInfo> GetUserCompact(CancellationToken cancellationToken)
+		{
+			var userId = User.Claims.First(c => c.Type == SoulgramClaimTypes.UserId).Value;
+			var user = await _dbContext.Users
+				.Where(u => u.Id == userId)
+				.Select(ui => new CompactUserInfo
+				(
+					ui.Fullname,
+					ui.UserName,
+					ui.Hobbies,
+					ui.ProfileImg
+				))
+				.FirstOrDefaultAsync(cancellationToken);
+			
 			return user;
 		}
 
