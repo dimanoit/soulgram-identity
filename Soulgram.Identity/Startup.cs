@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Soulgram.File.Manager;
+using Soulgram.File.Manager.Interfaces;
+using Soulgram.File.Manager.Models;
 using soulgram.identity.Data;
 using soulgram.identity.EventBus;
 using soulgram.identity.Models;
@@ -33,7 +36,8 @@ namespace soulgram.identity
             RegisterOptions(services);
             services.AddControllersWithViews();
             services.AddEventBus(Configuration);
-
+			
+            AddFileManager(services,Configuration);
             AddDbWithIdentity(services);
 
             #region TODO add extarnal providers
@@ -119,6 +123,13 @@ namespace soulgram.identity
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
+        }
+        
+        private static void AddFileManager(IServiceCollection services, IConfiguration configuration)
+        {
+	        services.Configure<BlobStorageOptions>(options => configuration.GetSection("BlobStorageOptions").Bind(options));
+	        services.AddScoped<IContainerNameResolver, ContainerNameResolver>();
+	        services.AddScoped<IFileManager, FileManager>();
         }
     }
 }

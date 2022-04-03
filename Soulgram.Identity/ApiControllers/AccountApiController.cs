@@ -10,6 +10,9 @@ using Soulgram.Identity.Models;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Soulgram.File.Manager.Interfaces;
+using soulgram.identity.Services;
 
 namespace Soulgram.Identity.ApiControllers
 {
@@ -18,12 +21,17 @@ namespace Soulgram.Identity.ApiControllers
 	public class AccountApiController : ControllerBase
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly IFileManager _fileManager;
 		private readonly IEventBus _eventBus;
-
-		public AccountApiController(UserManager<ApplicationUser> userManager, IEventBus eventBus)
+	
+		public AccountApiController(
+			UserManager<ApplicationUser> userManager,
+			IEventBus eventBus,
+			IFileManager fileManager)
 		{
 			_userManager = userManager;
 			_eventBus = eventBus;
+			_fileManager = fileManager;
 		}
 
 		[HttpPost]
@@ -78,6 +86,23 @@ namespace Soulgram.Identity.ApiControllers
 				return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
 			}
 
+			return Ok();
+		}
+
+		[HttpPut("profile-img")]
+		public async Task<IActionResult> UpdateProfilePicture(
+			[FromForm] IFormFile picture,
+			CancellationToken cancellationToken)
+		{
+			var user = await GetUser(cancellationToken);
+
+			var fileInfo = picture.ToFileInfo();
+			var uploadedPicture = await _fileManager.UploadFileAsync(fileInfo, user.Id);
+
+			user.ProfileImg = uploadedPicture;
+
+			await UpdateUser(user);
+			
 			return Ok();
 		}
 
