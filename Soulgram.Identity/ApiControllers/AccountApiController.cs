@@ -78,9 +78,13 @@ namespace Soulgram.Identity.ApiControllers
 		}
 
 		[HttpPut]
-		public async Task<IActionResult> UpdateUser([FromBody] ApplicationUser user)
+		//TODO add input parameters validation
+		public async Task<IActionResult> UpdateUser([FromBody] ApplicationUser user, CancellationToken cancellationToken)
 		{
-			var result = await _userManager.UpdateAsync(user);
+			var userToUpdate = await GetUser(cancellationToken);
+			userToUpdate.CheckThenUpdate(user);
+			
+			var result = await _userManager.UpdateAsync(userToUpdate);
 			if (!result.Succeeded)
 			{
 				return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
@@ -101,7 +105,7 @@ namespace Soulgram.Identity.ApiControllers
 
 			user.ProfileImg = uploadedPicture;
 
-			await UpdateUser(user);
+			await UpdateUser(user, cancellationToken);
 			
 			return Ok();
 		}
