@@ -5,5 +5,3 @@ public record CompactUserInfo(
     string Nickname,
     string Hobbies,
     string ProfileImgUrl);
-
-

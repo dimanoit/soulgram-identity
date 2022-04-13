@@ -1,7 +1,6 @@
-﻿namespace Soulgram.Identity.Models
+﻿namespace Soulgram.Identity.Models;
+
+public static class SoulgramClaimTypes
 {
-	public static class SoulgramClaimTypes
-	{
-		public const string UserId = "sub";
-	}
+    public const string UserId = "sub";
 }
