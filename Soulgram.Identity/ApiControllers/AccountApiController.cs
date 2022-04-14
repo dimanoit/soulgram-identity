@@ -21,7 +21,7 @@ public class AccountApiController : ControllerBase
     private readonly ApplicationDbContext _dbContext;
     private readonly IEventBus _eventBus;
     private readonly UserManager<ApplicationUser> _userManager;
-
+    
     public AccountApiController(
         UserManager<ApplicationUser> userManager,
         IEventBus eventBus,
@@ -80,12 +80,12 @@ public class AccountApiController : ControllerBase
     public async Task<IActionResult> DeleteUser(CancellationToken cancellationToken)
     {
         var user = await GetUser(cancellationToken);
-        // var result = await _userManager.DeleteAsync(user);
-        //
-        // if (!result.Succeeded)
-        // {
-        //     return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
-        // }
+        var result = await _userManager.DeleteAsync(user);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
+        }
 
         var userDeleteEvent = new DeletedUserEvent(user.Id);
         _eventBus.Publish(userDeleteEvent);
