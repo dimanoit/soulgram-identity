@@ -5,6 +5,7 @@ using Soulgram.Eventbus;
 using Soulgram.Eventbus.Interfaces;
 using Soulgram.EventBus.RabbitMq;
 using soulgram.identity.EventBus;
+using Soulgram.Identity.EventBus;
 
 namespace soulgram.identity;
 
@@ -15,6 +16,8 @@ public static class EventBusRegistrar
         var eventBusOption = configuration
             .GetSection("EventBus")
             .Get<EventBusOption>();
+
+        serviceCollection.AddScoped<IIntegrationEventLogService, IntegrationLogService>();
 
         serviceCollection.AddSingleton<IRabbitMQConnection>(_ =>
         {

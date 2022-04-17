@@ -32,7 +32,8 @@ public class Startup
         services.AddOptions();
         services.AddControllersWithViews();
         services.AddEventBus(Configuration);
-
+    
+        
         AddDbWithIdentity(services);
 
         #region TODO add extarnal providers
@@ -90,7 +91,7 @@ public class Startup
     private void AddDbWithIdentity(IServiceCollection services)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(Configuration.GetConnectionString("Identity")));
 
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()

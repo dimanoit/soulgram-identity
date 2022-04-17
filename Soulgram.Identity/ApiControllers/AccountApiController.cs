@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Soulgram.Eventbus.Interfaces;
 using soulgram.identity.Data;
+using Soulgram.Identity.EventBus;
+using Soulgram.Identity.EventBus.Converter;
 using Soulgram.Identity.IntegrationEvents;
 using soulgram.identity.Models;
 using Soulgram.Identity.Models;
@@ -20,16 +22,18 @@ public class AccountApiController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IEventBus _eventBus;
+    private readonly IIntegrationEventLogService _eventLogService;
     private readonly UserManager<ApplicationUser> _userManager;
-    
+
     public AccountApiController(
         UserManager<ApplicationUser> userManager,
         IEventBus eventBus,
-        ApplicationDbContext dbContext)
+        ApplicationDbContext dbContext, IIntegrationEventLogService eventLogService)
     {
         _userManager = userManager;
         _eventBus = eventBus;
         _dbContext = dbContext;
+        _eventLogService = eventLogService;
     }
 
     [HttpPost]
@@ -80,15 +84,16 @@ public class AccountApiController : ControllerBase
     public async Task<IActionResult> DeleteUser(CancellationToken cancellationToken)
     {
         var user = await GetUser(cancellationToken);
-        var result = await _userManager.DeleteAsync(user);
 
-        if (!result.Succeeded)
-        {
-            return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
-        }
+        var userDeletedEvent = new DeletedUserEvent(user.Id);
+        var eventLog = userDeletedEvent.ToIntegrationEventLogEntry();
 
-        var userDeleteEvent = new DeletedUserEvent(user.Id);
-        _eventBus.Publish(userDeleteEvent);
+        _dbContext.Remove(user);
+        _dbContext.IntegrationEventLogEntries.Add(eventLog);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        await _eventLogService.TryPublish(userDeletedEvent);
 
         return Ok();
     }
