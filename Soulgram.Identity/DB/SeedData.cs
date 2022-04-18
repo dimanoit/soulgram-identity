@@ -46,10 +46,7 @@ public class SeedData
                         EmailConfirmed = true
                     };
                     var result = userMgr.CreateAsync(alice, "Pass123$").Result;
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
+                    if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
 
                     result = userMgr.AddClaimsAsync(alice, new[]
                     {
@@ -58,10 +55,7 @@ public class SeedData
                         new Claim(JwtClaimTypes.FamilyName, "Smith"),
                         new Claim(JwtClaimTypes.WebSite, "http://alice.com")
                     }).Result;
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
+                    if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
 
                     Log.Debug("alice created");
                 }
@@ -80,10 +74,7 @@ public class SeedData
                         EmailConfirmed = true
                     };
                     var result = userMgr.CreateAsync(bob, "Pass123$").Result;
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
+                    if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
 
                     result = userMgr.AddClaimsAsync(bob, new[]
                     {
@@ -93,10 +84,7 @@ public class SeedData
                         new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
                         new Claim("location", "somewhere")
                     }).Result;
-                    if (!result.Succeeded)
-                    {
-                        throw new Exception(result.Errors.First().Description);
-                    }
+                    if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
 
                     Log.Debug("bob created");
                 }

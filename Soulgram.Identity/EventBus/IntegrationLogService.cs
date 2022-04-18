@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Soulgram.Eventbus;
@@ -41,14 +39,11 @@ public class IntegrationLogService : IIntegrationEventLogService
     {
         var failedEvents = await _dbContext
             .IntegrationEventLogEntries
-            .Where(_ => _.State == EventStateEnum.PublishedFailed)
-            .Select(_ => _.ToIntegrationEvent())
+            .Where(e => e.State == EventStateEnum.PublishedFailed)
+            .Select(e => e.ToIntegrationEvent())
             .ToArrayAsync();
-        
-        foreach (var @event in failedEvents)
-        {
-            await TryPublish(@event);
-        }
+
+        foreach (var @event in failedEvents) await TryPublish(@event);
     }
 
     private async Task UpdateIntegrationLogEntry(
@@ -59,10 +54,7 @@ public class IntegrationLogService : IIntegrationEventLogService
             .SingleAsync(le => le.EventId == eventId);
 
         logEntry.State = state;
-        if (state == EventStateEnum.InProgress)
-        {
-            logEntry.TimesSent++;
-        }
+        if (state == EventStateEnum.InProgress) logEntry.TimesSent++;
 
         await _dbContext.SaveChangesAsync();
     }

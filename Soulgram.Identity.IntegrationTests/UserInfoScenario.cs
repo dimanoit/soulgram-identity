@@ -59,10 +59,10 @@ public class UserInfoScenario : IClassFixture<WebApplicationFactory<Startup>>
 
         var queryParams = new Dictionary<string, string>
         {
-            {"client_id", "test_human_client"},
-            {"grant_type", "password"},
-            {"password", "DimaPassword123#"},
-            {"username", "dimanoit@gmail.com"}
+            { "client_id", "test_human_client" },
+            { "grant_type", "password" },
+            { "password", "DimaPassword123#" },
+            { "username", "dimanoit@gmail.com" }
         };
 
         var response = await client.PostAsync("connect/token", new FormUrlEncodedContent(queryParams));

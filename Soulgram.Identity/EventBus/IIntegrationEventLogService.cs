@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Soulgram.Eventbus;
 
@@ -8,5 +7,5 @@ public interface IIntegrationEventLogService
 {
     Task TryPublish(IntegrationEvent @event);
 
-    Task<IEnumerable<IntegrationEvent>> GetFailedEvents();
+    Task PublishFailedEvents();
 }

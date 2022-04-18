@@ -27,15 +27,9 @@ public static class EventBusRegistrar
                 DispatchConsumersAsync = true
             };
 
-            if (!string.IsNullOrEmpty(eventBusOption.Username))
-            {
-                factory.UserName = eventBusOption.Username;
-            }
+            if (!string.IsNullOrEmpty(eventBusOption.Username)) factory.UserName = eventBusOption.Username;
 
-            if (!string.IsNullOrEmpty(eventBusOption.Password))
-            {
-                factory.Password = eventBusOption.Password;
-            }
+            if (!string.IsNullOrEmpty(eventBusOption.Password)) factory.Password = eventBusOption.Password;
 
             return new RabbitMQConnection(factory);
         });

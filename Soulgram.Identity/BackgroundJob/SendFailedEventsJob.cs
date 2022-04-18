@@ -1,18 +1,31 @@
+using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Cronos;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Soulgram.Identity.EventBus;
 
 namespace soulgram.identity.BackgroundJob;
 
-public class SendFailedEventsJob : CronJob
-{ 
-    private readonly IIntegrationEventLogService _eventLogService;
+public sealed class SendFailedEventsJob : CronJob
+{
+    public IServiceProvider Services { get; }
 
-    public SendFailedEventsJob(IIntegrationEventLogService eventLogService)
+    public SendFailedEventsJob(IServiceProvider services) : base(CronExpression.Parse("* * * * *"))
     {
-        _eventLogService = eventLogService;
+        Services = services;
     }
 
-    public async Task SendFailedEvents()
+    public override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
+        using (var scope = Services.CreateScope())
+        {
+            var eventLogService = scope
+                .ServiceProvider
+                .GetRequiredService<IIntegrationEventLogService>();
+
+            await eventLogService.PublishFailedEvents();
+        }
     }
 }

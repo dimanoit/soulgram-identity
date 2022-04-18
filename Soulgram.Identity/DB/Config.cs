@@ -69,8 +69,8 @@ public static class Config
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.OfflineAccess
                 },
-                PostLogoutRedirectUris = {"http://localhost:4200/"},
-                AllowedCorsOrigins = {"http://localhost:4200"},
+                PostLogoutRedirectUris = { "http://localhost:4200/" },
+                AllowedCorsOrigins = { "http://localhost:4200" },
                 AllowAccessTokensViaBrowser = true,
                 AllowOfflineAccess = true,
                 RequireClientSecret = false

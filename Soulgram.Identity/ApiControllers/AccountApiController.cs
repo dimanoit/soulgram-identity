@@ -40,10 +40,7 @@ public class AccountApiController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterViewModel userModel)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest();
-        }
+        if (!ModelState.IsValid) return BadRequest();
 
         var user = new ApplicationUser
         {
@@ -52,10 +49,7 @@ public class AccountApiController : ControllerBase
         };
 
         var result = await _userManager.CreateAsync(user, userModel.Password);
-        if (!result.Succeeded)
-        {
-            return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
-        }
+        if (!result.Succeeded) return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
 
         var userCreatedEvent = new SuccessedUserRegistrationEvent(
             userId: user.Id,

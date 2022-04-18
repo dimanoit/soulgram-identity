@@ -12,16 +12,16 @@ public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         Database.Migrate();
     }
-    
+
     public DbSet<IntegrationEventLogEntry> IntegrationEventLogEntries { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.Entity<IntegrationEventLogEntry>(ConfigureIntegrationEventLogEntry);
     }
 
-    void ConfigureIntegrationEventLogEntry(EntityTypeBuilder<IntegrationEventLogEntry> builder)
+    private void ConfigureIntegrationEventLogEntry(EntityTypeBuilder<IntegrationEventLogEntry> builder)
     {
         builder.ToTable("IntegrationEventLog");
 
