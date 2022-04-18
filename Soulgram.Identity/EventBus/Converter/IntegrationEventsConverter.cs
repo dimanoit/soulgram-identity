@@ -33,11 +33,13 @@ public static class IntegrationEventsConverter
             throw new Exception("It's not a integration event type");
 
         var integrationEvent = JsonConvert.DeserializeObject(entry.Content, eventType) as IntegrationEvent;
+        integrationEvent!.Id = entry.EventId;
+        
         return integrationEvent;
     }
 
     private static string ToJson(this IntegrationEvent @event)
     {
-        return JsonConvert.SerializeObject(@event);
+        return JsonConvert.SerializeObject(@event); 
     }
 }

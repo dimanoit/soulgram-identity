@@ -48,17 +48,21 @@ public class AccountApiController : ControllerBase
             UserName = userModel.Nickname
         };
 
-        var result = await _userManager.CreateAsync(user, userModel.Password);
-        if (!result.Succeeded) return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
-
         var userCreatedEvent = new SuccessedUserRegistrationEvent(
-            userId: user.Id,
-            email: user.Email,
-            nickname: userModel.Nickname,
-            birthday: userModel.Birthday
+        userId: user.Id,
+        email: user.Email,
+        nickname: userModel.Nickname,
+        birthday: userModel.Birthday
         );
 
-        _eventBus.Publish(userCreatedEvent);
+        _dbContext.IntegrationEventLogEntries.Add(userCreatedEvent.ToIntegrationEventLogEntry());
+        var result = await _userManager.CreateAsync(user, userModel.Password);
+        if (!result.Succeeded)
+        {
+            return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
+        }
+
+        await _eventLogService.TryPublish(userCreatedEvent);
         return Ok();
     }
 
