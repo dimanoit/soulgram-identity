@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Cronos;
 using Microsoft.Extensions.Hosting;
-using Timer = System.Timers.Timer;
+using Timer=System.Timers.Timer;
 
 namespace soulgram.identity.BackgroundJob;
 
@@ -16,25 +16,22 @@ public abstract class CronJob : IHostedService, IDisposable
     {
         _cronExpression = cronExpression;
     }
-
     public void Dispose()
     {
         _timer?.Dispose();
     }
-
     public Task StartAsync(CancellationToken cancellationToken)
     {
         ScheduleNextRun(cancellationToken);
         return Task.CompletedTask;
     }
-
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _timer?.Stop();
         return Task.CompletedTask;
     }
+    protected abstract Task DoWorkAsync(CancellationToken cancellationToken);
 
-    public abstract Task DoWorkAsync(CancellationToken cancellationToken);
 
     private void ScheduleNextRun(CancellationToken cancellationToken)
     {
@@ -48,8 +45,7 @@ public abstract class CronJob : IHostedService, IDisposable
     private void CreateAndRunTimer(CancellationToken cancellationToken, TimeSpan delay)
     {
         _timer = new Timer(delay.TotalMilliseconds);
-        _timer.Elapsed += async (sender, args) =>
-        {
+        _timer.Elapsed += async (_, _) => {
             _timer.Dispose();
             _timer = null;
 

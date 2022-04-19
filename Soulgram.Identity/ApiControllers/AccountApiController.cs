@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Soulgram.Eventbus.Interfaces;
 using soulgram.identity.Data;
 using Soulgram.Identity.EventBus;
 using Soulgram.Identity.EventBus.Converter;
@@ -21,17 +20,15 @@ namespace Soulgram.Identity.ApiControllers;
 public class AccountApiController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IEventBus _eventBus;
     private readonly IIntegrationEventLogService _eventLogService;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public AccountApiController(
         UserManager<ApplicationUser> userManager,
-        IEventBus eventBus,
-        ApplicationDbContext dbContext, IIntegrationEventLogService eventLogService)
+        ApplicationDbContext dbContext,
+        IIntegrationEventLogService eventLogService)
     {
         _userManager = userManager;
-        _eventBus = eventBus;
         _dbContext = dbContext;
         _eventLogService = eventLogService;
     }
@@ -57,10 +54,7 @@ public class AccountApiController : ControllerBase
 
         _dbContext.IntegrationEventLogEntries.Add(userCreatedEvent.ToIntegrationEventLogEntry());
         var result = await _userManager.CreateAsync(user, userModel.Password);
-        if (!result.Succeeded)
-        {
-            return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
-        }
+        if (!result.Succeeded) return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
 
         await _eventLogService.TryPublish(userCreatedEvent);
         return Ok();
@@ -88,9 +82,9 @@ public class AccountApiController : ControllerBase
 
         _dbContext.Remove(user);
         _dbContext.IntegrationEventLogEntries.Add(eventLog);
-        
+
         await _dbContext.SaveChangesAsync(cancellationToken);
-        
+
         await _eventLogService.TryPublish(userDeletedEvent);
 
         return Ok();

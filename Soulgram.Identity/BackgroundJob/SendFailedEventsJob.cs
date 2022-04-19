@@ -9,26 +9,21 @@ namespace soulgram.identity.BackgroundJob;
 
 public sealed class SendFailedEventsJob : CronJob
 {
+    //TODO get cron expression from config
     public SendFailedEventsJob(IServiceProvider services) : base(CronExpression.Parse("* * * * *"))
     {
         Services = services;
     }
 
-    public IServiceProvider Services { get; }
+    private IServiceProvider Services { get; }
 
-    public override async Task DoWorkAsync(CancellationToken cancellationToken)
+    protected override async Task DoWorkAsync(CancellationToken cancellationToken)
     {
-        Console.WriteLine("Start sending failed evens");
+        using var scope = Services.CreateScope();
+        var eventLogService = scope
+            .ServiceProvider
+            .GetRequiredService<IIntegrationEventLogService>();
 
-        using (var scope = Services.CreateScope())
-        {
-            var eventLogService = scope
-                .ServiceProvider
-                .GetRequiredService<IIntegrationEventLogService>();
-
-            await eventLogService.PublishFailedEvents();
-        }
-
-        Console.WriteLine("Finish sending failed evens");
+        await eventLogService.PublishFailedEvents();
     }
 }

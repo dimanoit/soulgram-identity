@@ -62,7 +62,7 @@ public class UserInfoScenario : IClassFixture<WebApplicationFactory<Startup>>
             { "client_id", "test_human_client" },
             { "grant_type", "password" },
             { "password", "DimaPassword123#" },
-            { "username", "dimanoit@gmail.com" }
+            { "username", "dimanoit" }
         };
 
         var response = await client.PostAsync("connect/token", new FormUrlEncodedContent(queryParams));

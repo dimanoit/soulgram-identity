@@ -34,12 +34,12 @@ public static class IntegrationEventsConverter
 
         var integrationEvent = JsonConvert.DeserializeObject(entry.Content, eventType) as IntegrationEvent;
         integrationEvent!.Id = entry.EventId;
-        
+
         return integrationEvent;
     }
 
     private static string ToJson(this IntegrationEvent @event)
     {
-        return JsonConvert.SerializeObject(@event); 
+        return JsonConvert.SerializeObject(@event);
     }
 }
