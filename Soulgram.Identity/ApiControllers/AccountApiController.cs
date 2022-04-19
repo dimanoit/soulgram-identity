@@ -88,9 +88,9 @@ public class AccountApiController : ControllerBase
 
         _dbContext.Remove(user);
         _dbContext.IntegrationEventLogEntries.Add(eventLog);
-
+        
         await _dbContext.SaveChangesAsync(cancellationToken);
-
+        
         await _eventLogService.TryPublish(userDeletedEvent);
 
         return Ok();
