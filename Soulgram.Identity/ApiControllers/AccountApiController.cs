@@ -49,7 +49,8 @@ public class AccountApiController : ControllerBase
         userId: user.Id,
         email: user.Email,
         nickname: userModel.Nickname,
-        birthday: userModel.Birthday
+        birthday: userModel.Birthday,
+        fullname: userModel.Fullname
         );
 
         _dbContext.IntegrationEventLogEntries.Add(userCreatedEvent.ToIntegrationEventLogEntry());
