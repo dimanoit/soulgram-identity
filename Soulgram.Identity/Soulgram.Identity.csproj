@@ -36,6 +36,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.4" />
         <PackageReference Include="Soulgram.EventBus.RabbitMq" Version="2.0.3" />
+        <PackageReference Include="Soulgram.Logging" Version="1.0.0" />
     </ItemGroup>
-
 </Project>

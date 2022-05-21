@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using soulgram.identity.Data;
 using Soulgram.Identity.EventBus;
 using Soulgram.Identity.EventBus.Converter;
@@ -21,23 +22,29 @@ public class AccountApiController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IIntegrationEventLogService _eventLogService;
+    private readonly ILogger<AccountApiController> _logger;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public AccountApiController(
         UserManager<ApplicationUser> userManager,
         ApplicationDbContext dbContext,
-        IIntegrationEventLogService eventLogService)
+        IIntegrationEventLogService eventLogService, 
+        ILogger<AccountApiController> logger)
     {
         _userManager = userManager;
         _dbContext = dbContext;
         _eventLogService = eventLogService;
+        _logger = logger;
     }
 
     [HttpPost]
     [AllowAnonymous]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterViewModel userModel)
     {
-        if (!ModelState.IsValid) return BadRequest();
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
 
         var user = new ApplicationUser
         {
@@ -46,16 +53,21 @@ public class AccountApiController : ControllerBase
         };
 
         var userCreatedEvent = new SuccessedUserRegistrationEvent(
-        userId: user.Id,
-        email: user.Email,
-        nickname: userModel.Nickname,
-        birthday: userModel.Birthday,
-        fullname: userModel.Fullname
+            userId: user.Id,
+            email: user.Email,
+            nickname: userModel.Nickname,
+            birthday: userModel.Birthday,
+            fullname: userModel.Fullname
         );
 
         _dbContext.IntegrationEventLogEntries.Add(userCreatedEvent.ToIntegrationEventLogEntry());
         var result = await _userManager.CreateAsync(user, userModel.Password);
-        if (!result.Succeeded) return BadRequest(string.Join(",", result.Errors.Select(ie => ie.Description)));
+        if (!result.Succeeded)
+        {
+            _logger.LogError(string.Join(",", result.Errors.Select(ie => ie.Description)));
+            return BadRequest("Sorry we can't handle your request please try again");
+        }
+
 
         await _eventLogService.TryPublish(userCreatedEvent);
         return Ok();

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-
+using System.Collections.Generic;
 using Cronos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,9 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog.Events;
 using soulgram.identity.BackgroundJob;
 using soulgram.identity.Data;
 using soulgram.identity.Models;
+using Soulgram.Logging;
+using Soulgram.Logging.Enums;
+using Soulgram.Logging.Models;
 
 namespace soulgram.identity;
 
@@ -37,8 +41,9 @@ public class Startup
 
         services.Configure<SendFailedEventsJobOptions>(Configuration);
         services.AddHostedService<SendFailedEventsJob>();
-        
+
         AddDbWithIdentity(services);
+        AddLogging(services);
 
         #region TODO add extarnal providers
 
@@ -128,5 +133,14 @@ public class Startup
 
         // not recommended for production - you need to store your key material somewhere secure
         builder.AddDeveloperSigningCredential();
+    }
+
+    private void AddLogging(IServiceCollection services)
+    {
+        var loggingSettings = Configuration
+            .GetSection("LoggingSettings")
+            .Get<LoggingSettings>();
+
+        services.AddLogging(loggingSettings);
     }
 }
